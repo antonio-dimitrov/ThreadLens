@@ -1,0 +1,26 @@
+@rootURL = http://localhost:5116
+
+GET {{rootURL}}/weatherforecast/
+Accept: application/json
+
+###
+GET {{rootURL}}/api/scans
+Accept: application/json
+###
+GET {{rootURL}}/api/scans/0
+Accept: application/json
+###
+POST {{rootURL}}/api/scans
+Content-Type: application/json
+
+{
+ "Target" : "google.com"
+}
+###
+DELETE {{rootURL}}/api/scans/2
+###
+PUT {{rootURL}}/api/scans/1
+Content-Type: application/json
+{
+ "Target" : "youtube.com"
+}
