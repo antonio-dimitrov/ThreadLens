@@ -7,14 +7,14 @@ Accept: application/json
 GET {{rootURL}}/api/scans
 Accept: application/json
 ###
-GET {{rootURL}}/api/scans/0
+GET {{rootURL}}/api/scans/1
 Accept: application/json
 ###
 POST {{rootURL}}/api/scans
 Content-Type: application/json
 
 {
- "Target" : "google.com"
+ "Target" : "8.8.8.8"
 }
 ###
 DELETE {{rootURL}}/api/scans/2

@@ -1,4 +1,8 @@
 
+using Microsoft.EntityFrameworkCore;
+using ThreatLens.Api.Data;
+using ThreatLens.Api.Services;
+
 namespace ThreatLens.Api
 {
     public class Program
@@ -12,6 +16,11 @@ namespace ThreatLens.Api
             builder.Services.AddControllers();
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
+
+            builder.Services.AddScoped<ScanService>();
+
+            builder.Services.AddDbContext<ThreatLensContext>(options =>
+            options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectionString")));
 
             var app = builder.Build();
 

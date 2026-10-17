@@ -1,4 +1,4 @@
-﻿namespace ThreatLens.Api.Modules
+﻿namespace ThreatLens.Api.Models
 {
     public class ScanRequest
     {

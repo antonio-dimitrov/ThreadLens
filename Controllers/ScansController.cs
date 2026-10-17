@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿
 using Microsoft.AspNetCore.Mvc;
-using ThreatLens.Api.Modules;
+using ThreatLens.Api.Models;
+using ThreatLens.Api.Services;
 
 namespace ThreatLens.Api.Controllers
 {
@@ -8,69 +9,80 @@ namespace ThreatLens.Api.Controllers
     [ApiController]
     public class ScansController : ControllerBase
     {
-        private static int idCounter = 0;
-        static private List<ScanRequest> scans = new List<ScanRequest>
+
+
+        private readonly ScanService _scanService;
+
+        public ScansController(ScanService scanService)
         {
-            new ScanRequest
-            {
-                Target = "example.com"
-            }
-        };
+            _scanService = scanService;
+        }
+        //private static int idCounter = 0;
+        //static private List<ScanRequest> scans = new List<ScanRequest>
+        //{
+        //    new ScanRequest
+        //    {
+        //        Target = "example.com"
+        //    }
+        //};
         [HttpGet]
-        public ActionResult<List<ScanRequest>> GetScans()
+        public async  Task<ActionResult<List<ScanRequest>>> GetScans()
         {
+            var scans = await _scanService.GetAllScansAsync();
             return Ok(scans);
         }
 
         [HttpGet("{id}")]
-        public ActionResult<List<ScanRequest>> GetScanById(int id)
+        public async Task<ActionResult<ScanRequest>> GetScanById(int id)
         {
-            var scan = scans.FirstOrDefault(x => x.Id == id);
+            var scan = await _scanService.GetScanByIdAsync(id);
+
             if (scan == null)
+            {
                 return NotFound();
+            }
 
             return Ok(scan);
         }
 
         [HttpPost]
-        public ActionResult<ScanRequest> addScan(ScanRequest scan)
+        public async Task<ActionResult<ScanRequest>> AddScan(ScanRequest request)
         {
-            if (string.IsNullOrWhiteSpace(scan.Target))
-                return BadRequest();
+            var scan = await _scanService.CreateScanAsync(request.Target);
 
-
-            scan.Id = ++idCounter;
-            scans.Add(scan);
-            
+            if (scan == null)
+                return BadRequest("Invalid IP address or domain.");
 
             return Ok(scan);
         }
 
         [HttpDelete("{id}")]
-        public IActionResult DeleteScan(int id)
+        public async Task<IActionResult> DeleteScan(int id)
         {
-            var scan = scans.FirstOrDefault(x => x.Id == id);
-            if (scan == null)
-                return NotFound();
+            var deleted = await _scanService.DeleteScanAsync(id);
 
-            scans.Remove(scan);
+            if (!deleted)
+            {
+                return NotFound();
+            }
+
             return NoContent();
         }
 
-        [HttpPut("{id}")]
-        public IActionResult UpdateScan(int id, [FromBody]ScanRequest updateScan)
-        {
-            var scan = scans.FirstOrDefault(x => x.Id == id);
-            if (scan == null)
-                return NotFound();
+        //[HttpPut("{id}")]
+        //public IActionResult UpdateScan(int id, [FromBody]ScanRequest updateScan)
+        //{
+        //    var scan = scans.FirstOrDefault(x => x.Id == id);
+        //    if (scan == null)
+        //        return NotFound();
 
-            if (string.IsNullOrWhiteSpace(updateScan.Target))
-                return BadRequest();
+        //    if (string.IsNullOrWhiteSpace(updateScan.Target))
+        //        return BadRequest();
 
 
-            scan.Target = updateScan.Target;
+        //    scan.Target = updateScan.Target;
 
-            return NoContent();
-        }
+        //    return NoContent();
+        //}
     }
 }
